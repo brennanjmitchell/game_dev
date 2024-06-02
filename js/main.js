@@ -9,7 +9,6 @@ const cube = new THREE.Mesh(geometry, material);
 // Add the cube to the scene
 scene.add(cube);
 
-/*
 // Load a test GLTF Model
 const loader = new THREE.GLTFLoader();
 
@@ -24,7 +23,6 @@ loader.load(
         console.error('An error occurred while loading the model:', error);
     }
 );
-*/
 
 // Initialize the renderer and add it to the DOM
 const renderer = initRenderer();
