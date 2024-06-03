@@ -10,7 +10,7 @@ import { onWindowResize } from './eventHandlers.js';
 scene.add(ambientLight);
 scene.add(directionalLight);
 
-// Load and add model to the scene
+// Load and add our models to the scene
 loadModel('assets/models/testBook.glb', (model) => {
   scene.add(model);
 });
