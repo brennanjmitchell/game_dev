@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import scene from './scene.js';
 import camera from './camera.js';
-import renderer from './renderer.js';
+import { renderer, render, resize } from './renderer.js';
 import controls from './controls.js';
 import * as Models from './models.js';
 import { ambientLight, directionalLight } from './lights.js';
@@ -17,20 +17,25 @@ const objects = {};
 // Load and add our models to the scene
 Models.loadModel('assets/models/testBook.glb', (model) => {
   objects.testBook = model;
+  // Models.convertToBasicMaterial(model);
   scene.add(model);
 });
 
 // Load and add our skydome to the scene
-Models.loadModel('assets/models/skydome_RustigKoppie_PureSky.glb', (skydome) => {
-  objects.skydome = skydome;
-  Models.copyPosition(skydome, camera.position);
-  Models.setFrontsideMaterial(skydome); // Ensure normals are correct
-  Models.convertToBasicMaterial(skydome);
-  Models.disableDepth(skydome);
-  Models.setRenderOrder(skydome, -1); // Ensure skydome renders first
-  scene.add(skydome);
-});
+Models.loadModel(
+  'assets/models/skydome_RustigKoppie_PureSky.glb',
+  (skydome) => {
+    objects.skydome = skydome;
+    Models.copyPosition(skydome, camera.position);
+    Models.setFrontsideMaterial(skydome); // Ensure normals are correct
+    Models.convertToBasicMaterial(skydome);
+    Models.disableDepth(skydome);
+    Models.setRenderOrder(skydome, -1); // Ensure skydome renders first
+    scene.add(skydome);
+  }
+);
 
+// Keep track of if/when the camera moves
 let lastCameraPosition = new THREE.Vector3();
 
 function animate() {
@@ -43,9 +48,13 @@ function animate() {
   }
 
   controls.update();
-  renderer.render(scene, camera);
+
+  // Call the render function from renderer.js
+  render(scene, camera);
 }
 
-window.addEventListener('resize', () => onWindowResize(camera, renderer), false);
+window.addEventListener('resize', () => {
+  onWindowResize(camera), false;
+});
 
 animate();

@@ -10,7 +10,7 @@ function loadModel(path, onLoad) {
 }
 
 function copyPosition(object, position) {
-  object.position.copy(position)
+  object.position.copy(position);
 }
 
 function setPosition(object, x, y, z) {
@@ -85,4 +85,16 @@ function setRenderOrder(object, order) {
   });
 }
 
-export { loadModel, copyPosition, setPosition, disableShadows, disableDepth, setBacksideMaterial, setFrontsideMaterial, convertToBasicMaterial, setEmissiveIntensity, setLayer, setRenderOrder };
+export {
+  loadModel,
+  copyPosition,
+  setPosition,
+  disableShadows,
+  disableDepth,
+  setBacksideMaterial,
+  setFrontsideMaterial,
+  convertToBasicMaterial,
+  setEmissiveIntensity,
+  setLayer,
+  setRenderOrder,
+};
