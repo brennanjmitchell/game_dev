@@ -18,43 +18,9 @@ scene.add(directionalLight);
 const objects = {};
 
 // Load and add some sand dunes
-Models.loadModel('assets/models/sandDunes.glb', (ground) => {
-  const geometry = ground.children[0].geometry; // Assuming the ground model is the first child
-  const material = ground.children[0].material;
-  const geometryWidth = 1;
-  const geometryDepth = 1;
-
-  // Create an InstancedMesh Grid
-  const gridSize = 10;
-  let count = Math.pow(gridSize, 2);
-  const instancedMesh = new THREE.InstancedMesh(geometry, material, count);
-
-  const matrix = new THREE.Matrix4();
-  const bottomCornerDim = geometryWidth * (gridSize / 2);
-  matrix.setPosition(-bottomCornerDim, 0, -bottomCornerDim);
-
-  let index = 0;
-  for (let x = 0; x < gridSize; x++) {
-    for (let z = 0; z < gridSize; z++) {
-      console.log(x, z);
-      printMatrix(matrix);
-
-      instancedMesh.setMatrixAt(index, matrix);
-      moveMatrix(matrix, geometryWidth, 0, 0);
-      index++;
-    }
-    moveMatrix(matrix, geometryWidth * -gridSize, 0, geometryDepth);
-  }
-
-  scene.add(instancedMesh);
+Models.loadInstancedGrid('assets/models/sandDunes.glb', 10, 1, (dunes) => {
+  scene.add(dunes);
 });
-
-// // Load and add our models to the scene
-// Models.loadModel('assets/models/testBook.glb', (model) => {
-//   objects.testBook = model;
-//   // Models.convertToBasicMaterial(model);
-//   scene.add(model);
-// });
 
 // Load and add our skydome to the scene
 Models.loadModel(

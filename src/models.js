@@ -3,10 +3,78 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 const loader = new GLTFLoader();
 
-function loadModel(path, onLoad) {
-  loader.load(path, (gltf) => {
-    onLoad(gltf.scene);
-  });
+/**
+ * Loads a GLTF from the specified path and executes a callback function upon successful loading.
+ *
+ * @param {string} path - The path to the 3D model file.
+ * @param {function} onLoad - The callback function to execute when the model is successfully loaded.
+ * @param {function} [onError] - The optional callback function to execute if an error occurs during loading.
+ */
+function loadModel(path, onLoad, onError) {
+  loader.load(
+    path,
+    (gltf) => {
+      onLoad(gltf.scene);
+    },
+    undefined,
+    (error) => {
+      if (onError) {
+        onError(error);
+      } else {
+        console.error('An error occurred while loading the model:', error);
+      }
+    }
+  );
+}
+
+/**
+ * Loads a GLTF from the specified path and instances its first child in a square grid.
+ *
+ * @param {string} path - The path to the GLTF file.
+ * @param {number} gridSize - The width and height of the square grid.
+ * @param {number} spacing - The spacing between each instance. Make this value the same size as each instance for seamless tiling.
+ * @param {function} callback - The callback function to execute when the grid is created.
+ * @param {function} [onError] - The optional callback function to execute if an error occurs during loading.
+ */
+function loadInstancedGrid(path, gridSize, spacing, callback, onError) {
+  loader.load(
+    path,
+    (gltf) => {
+      const model = gltf.scene.children[0]; // Assume our intended model is the first child
+      const geometry = model.geometry;
+      const material = model.material;
+
+      // Create an InstancedMesh Grid
+      const count = Math.pow(gridSize, 2);
+      const instancedMesh = new THREE.InstancedMesh(geometry, material, count);
+
+      const matrix = new THREE.Matrix4();
+      const bottomCornerDim = spacing * (gridSize / 2);
+
+      let index = 0;
+      for (let x = 0; x < gridSize; x++) {
+        for (let z = 0; z < gridSize; z++) {
+          matrix.setPosition(
+            -bottomCornerDim + x * spacing,
+            0,
+            -bottomCornerDim + z * spacing
+          );
+          instancedMesh.setMatrixAt(index, matrix);
+          index++;
+        }
+      }
+
+      callback(instancedMesh);
+    },
+    undefined,
+    (error) => {
+      if (onError) {
+        onError(error);
+      } else {
+        console.error('An error occurred while loading the model:', error);
+      }
+    }
+  );
 }
 
 function copyPosition(object, position) {
@@ -87,6 +155,7 @@ function setRenderOrder(object, order) {
 
 export {
   loadModel,
+  loadInstancedGrid,
   copyPosition,
   setPosition,
   disableShadows,
