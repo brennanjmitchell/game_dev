@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 // Create an optional Render Target for a pixelated, "DS" look
-let useReducedResolution = false;
+let useReducedResolution = true;
 const VIRTUAL_WIDTH = 320;
 const VIRTUAL_HEIGHT = 240;
 

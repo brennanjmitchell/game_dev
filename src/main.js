@@ -12,22 +12,65 @@ import { moveMatrix, printMatrix } from './utils.js';
 scene.add(ambientLight);
 scene.add(directionalLight);
 
-// scene.fog = new THREE.Fog(0xeb4034, 10, 20); // Sets a red fog that fades on between 10 and 20 units
+scene.fog = new THREE.Fog(0xf8d49e, 150, 300); // Sets a red fog that fades on between 10 and 20 units
 
 // Create a map to hold references to objects
 const objects = {};
 
-// Load and add some sand dunes
-Models.loadInstancedGrid('assets/models/sandDunes.glb', 10, 1, (dunes) => {
-  scene.add(dunes);
+// Load some sand dunes
+Models.loadInstancedGrid(
+  'assets/models/sandDunes.glb',
+  20,
+  1,
+  (dunes) => {
+    objects.ground = dunes;
+
+    // // Test Shadows
+    // dunes.castShadow = true;
+    // dunes.receiveShadow = true;
+
+    // Apply a simple "sandy" color
+    const sandyDuneColor = new THREE.Color(0xf8d49e); // Example sandy dune color
+    const sandyMaterial = new THREE.MeshStandardMaterial({
+      color: sandyDuneColor,
+      roughness: 1,
+      metalness: 0,
+    });
+    dunes.material = sandyMaterial;
+
+    scene.add(dunes);
+  },
+  50
+);
+
+// Load a reference sphere to indicate "origin"
+Models.loadModel('assets/models/skydome_Simple.glb', (sphere) => {
+  scene.add(sphere);
 });
 
 // Load and add our skydome to the scene
 Models.loadModel(
-  // 'assets/models/skydome_RustigKoppie_PureSky.glb',
-  'assets/models/skydome_Simple.glb', // Simple skydome with low horizon line
+  'assets/models/skydome_RustigKoppie_PureSky.glb',
+  // 'assets/models/skydome_Simple.glb', // Simple skydome with low horizon line
   (skydome) => {
     objects.skydome = skydome;
+
+    const textureLoader = new THREE.TextureLoader();
+    const skyTexture = textureLoader.load(
+      'assets/textures/skydome_simpleDesert.jpg',
+      (texture) => {
+        texture.flipY = false; // Flip the texture vertically
+      }
+    );
+
+    // Apply the texture to the skydome material
+    skydome.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = skyTexture;
+        child.material.needsUpdate = true;
+      }
+    });
+
     Models.copyPosition(skydome, camera.position);
     Models.setFrontsideMaterial(skydome); // Ensure normals are correct
     Models.convertToBasicMaterial(skydome);
@@ -47,6 +90,11 @@ function animate() {
   if (objects.skydome && !lastCameraPosition.equals(camera.position)) {
     objects.skydome.position.copy(camera.position);
     lastCameraPosition.copy(camera.position);
+  }
+
+  // Scroll our "infinite" ground plane if it exists
+  if (objects.ground) {
+    Models.scrollInstancedGrid(objects.ground, 'x', 0.02);
   }
 
   controls.update();
