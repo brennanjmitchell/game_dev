@@ -1,12 +1,11 @@
 import * as THREE from 'three';
 import scene from './scene.js';
 import camera from './camera.js';
-import { renderer, render, resize } from './renderer.js';
+import { render } from './renderer.js';
 import controls from './controls.js';
 import * as Models from './models.js';
 import { ambientLight, directionalLight } from './lights.js';
 import { onWindowResize } from './eventHandlers.js';
-import { moveMatrix, printMatrix } from './utils.js';
 
 // Add lights to the scene
 scene.add(ambientLight);
@@ -20,7 +19,7 @@ const objects = {};
 // Load some sand dunes
 Models.loadInstancedGrid(
   'assets/models/sandDunes.glb',
-  20,
+  30,
   1,
   (dunes) => {
     objects.ground = dunes;
@@ -38,46 +37,11 @@ Models.loadInstancedGrid(
     });
     dunes.material = sandyMaterial;
 
+    Models.setRenderOrder(dunes, 1);
+
     scene.add(dunes);
   },
   50
-);
-
-// Load a reference sphere to indicate "origin"
-Models.loadModel('assets/models/skydome_Simple.glb', (sphere) => {
-  scene.add(sphere);
-});
-
-// Load and add our skydome to the scene
-Models.loadModel(
-  'assets/models/skydome_RustigKoppie_PureSky.glb',
-  // 'assets/models/skydome_Simple.glb', // Simple skydome with low horizon line
-  (skydome) => {
-    objects.skydome = skydome;
-
-    const textureLoader = new THREE.TextureLoader();
-    const skyTexture = textureLoader.load(
-      'assets/textures/skydome_simpleDesert.jpg',
-      (texture) => {
-        texture.flipY = false; // Flip the texture vertically
-      }
-    );
-
-    // Apply the texture to the skydome material
-    skydome.traverse((child) => {
-      if (child.isMesh) {
-        child.material.map = skyTexture;
-        child.material.needsUpdate = true;
-      }
-    });
-
-    Models.copyPosition(skydome, camera.position);
-    Models.setFrontsideMaterial(skydome); // Ensure normals are correct
-    Models.convertToBasicMaterial(skydome);
-    Models.disableDepth(skydome);
-    Models.setRenderOrder(skydome, -1); // Ensure skydome renders first
-    scene.add(skydome);
-  }
 );
 
 // Keep track of if/when the camera moves
@@ -87,14 +51,15 @@ function animate() {
   requestAnimationFrame(animate);
 
   // Lock skydome to camera position if the camera moved
-  if (objects.skydome && !lastCameraPosition.equals(camera.position)) {
-    objects.skydome.position.copy(camera.position);
+  if (objects.skydome_bg && !lastCameraPosition.equals(camera.position)) {
+    objects.skydome_bg.position.copy(camera.position);
+    objects.skydome_mg.position.copy(camera.position);
     lastCameraPosition.copy(camera.position);
   }
 
   // Scroll our "infinite" ground plane if it exists
   if (objects.ground) {
-    Models.scrollInstancedGrid(objects.ground, 'x', 0.02);
+    Models.scrollInstancedGrid(objects.ground, 'x', 0.1);
   }
 
   controls.update();
