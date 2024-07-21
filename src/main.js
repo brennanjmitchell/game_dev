@@ -44,6 +44,20 @@ Models.loadInstancedGrid(
   50
 );
 
+// Load the skybox textures
+const loader = new THREE.CubeTextureLoader();
+const skyboxTextures = loader.load([
+  'assets/textures/desertSkybox/desert_px.png',  // Left
+  'assets/textures/desertSkybox/desert_nx.png',  // Right
+  'assets/textures/desertSkybox/desert_py.png',  // Top
+  'assets/textures/desertSkybox/desert_ny.png',  // Bottom
+  'assets/textures/desertSkybox/desert_pz.png',  // Front
+  'assets/textures/desertSkybox/desert_nz.png'   // Back
+]);
+
+// Set the scene's background to the loaded skybox textures
+scene.background = skyboxTextures;
+
 // Keep track of if/when the camera moves
 let lastCameraPosition = new THREE.Vector3();
 
