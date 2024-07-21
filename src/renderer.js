@@ -75,6 +75,7 @@ function render(scene, camera) {
     renderer.render(quadScene, quadCamera);
   } else {
     renderer.setRenderTarget(null);
+    renderer.outputEncoding = THREE.sRGBEncoding; // Set encoding to sRGB
     renderer.render(scene, camera);
   }
 }

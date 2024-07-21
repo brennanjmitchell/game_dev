@@ -183,6 +183,8 @@ function convertToBasicMaterial(object) {
         map: child.material.map || null,
         color: child.material.color || new THREE.Color(0xffffff),
         side: child.material.side || THREE.FrontSide,
+        transparent: child.material.transparent || false,
+        premultipliedAlpha: child.material.premultipliedAlpha || false
       });
 
       child.material = basicMaterial;
