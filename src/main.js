@@ -11,7 +11,7 @@ import { onWindowResize } from './eventHandlers.js';
 scene.add(ambientLight);
 scene.add(directionalLight);
 
-scene.fog = new THREE.Fog(0xf8d49e, 150, 300); // Sets a red fog that fades on between 10 and 20 units
+scene.fog = new THREE.Fog(0xf8d49e, 5, 300); // Sets a fog that fades on between 5 and 300
 
 // Create a map to hold references to objects
 const objects = {};
@@ -19,7 +19,7 @@ const objects = {};
 // Load some sand dunes
 Models.loadInstancedGrid(
   'assets/models/sandDunes.glb',
-  30,
+  50,
   1,
   (dunes) => {
     objects.ground = dunes;
@@ -47,12 +47,12 @@ Models.loadInstancedGrid(
 // Load the skybox textures
 const loader = new THREE.CubeTextureLoader();
 const skyboxTextures = loader.load([
-  'assets/textures/desertSkybox/desert_px.png',  // Left
-  'assets/textures/desertSkybox/desert_nx.png',  // Right
-  'assets/textures/desertSkybox/desert_py.png',  // Top
-  'assets/textures/desertSkybox/desert_ny.png',  // Bottom
-  'assets/textures/desertSkybox/desert_pz.png',  // Front
-  'assets/textures/desertSkybox/desert_nz.png'   // Back
+  'assets/textures/waterfallSkybox/px.png',  // Left
+  'assets/textures/waterfallSkybox/nx.png',  // Right
+  'assets/textures/waterfallSkybox/py.png',  // Top
+  'assets/textures/waterfallSkybox/ny.png',  // Bottom
+  'assets/textures/waterfallSkybox/pz.png',  // Front
+  'assets/textures/waterfallSkybox/nz.png'   // Back
 ]);
 
 // Set the scene's background to the loaded skybox textures
